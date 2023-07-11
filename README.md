@@ -7,6 +7,15 @@ A smart voice assistant with multi-language support and long-term memory. Curren
 - ```sudo apt-get install flac espeak sox portaudio19-dev```
 - ```sudo pip3 install pyaudio pvporcupine pyttsx3 SpeechRecognition requests openai google-api-python-client python-vlc Adafruit_DHT luma.led_matrix wolframalpha langchain google-cloud-speech google-cloud-texttospeech mutagen tiktoken colorama```
 
+### Run the program
+1. Open the terminal
+1. Run python script:
+   ```python {PROJECT DIRECTORY}\VoiceAssistant.py```
+   **OR** run python3 script:
+   ```& python3 "{PROJECT DIRECTORY}\VoiceAssistant.py"```
+1. Example:
+```& python "C:\Users\username\Documents\VoiceAssistant\test.py"```
+
 ## Windows
 ### Set-Up
 **Run these commands, and follow the steps to install the packages (PowerShell terminal):**
@@ -16,6 +25,8 @@ A smart voice assistant with multi-language support and long-term memory. Curren
    ```Invoke-WebRequest -Uri https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py; python get-pip.py```
 1. Create an environment:
    ```python -m venv "{PROJECT DIRECTORY}\venv"```
+   Example:
+   ```python -m venv "C:\Users\username\Documents\VoiceAssistant\venv"```
 1. Activate the environment:
    ```& "{PROJECT DIRECTORY}\venv\Scripts\Activate.ps1"```
 1. Install packages:
@@ -32,13 +43,5 @@ A smart voice assistant with multi-language support and long-term memory. Curren
    ```& python "{PROJECT DIRECTORY}\VoiceAssistant.py"```
    **OR** run python3 script:
    ```& python3 "{PROJECT DIRECTORY}\VoiceAssistant.py"```
-
-
-Examples:
-
-python -m venv "C:\Users\03ott\Documents\VoiceAssistant\venv"
-
-& "C:\Users\03ott\Documents\VoiceAssistant\venv\Scripts\Activate.ps1"
-
-& python "C:\Users\03ott\Documents\VoiceAssistant\test.py"
-
+   Example:
+   ```& python "C:\Users\username\Documents\VoiceAssistant\test.py"```
