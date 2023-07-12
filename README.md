@@ -1,6 +1,20 @@
 # SmartVoiceAssistant
 A smart voice assistant with multi-language support and long-term memory. Currently best for Swedish and English. Compatible with Windows and Raspberry Pi. The assistant can use various functions and tools to answer question (Google, Wolfram Alpha, etc.). Based on OpenAI's GPT-models, Google STT and TTS, and ElevenLabs TTS.
 
+
+## Download
+- Start by downloading all of the files in this repository as a ZIP-file, and unzip as a folder (with the files in it) on your device.
+
+## Get API-keys, credentials and ID's
+- OpenAI API Key
+- Porcupine Access Key (Wake-word recognizer)
+- ElevenLabs API Key (Text-To-Speech)
+- Google
+  - Custom Search API Key (developerKey)
+  - Search Engine ID (cx)
+  - Cloud JSON Credentials File
+- Wolfram Alpha App ID
+
 ## Raspberry Pi
 ### Set-Up
 **Run these commands to install packages on a Raspberry Pi (terminal):**
@@ -13,8 +27,7 @@ A smart voice assistant with multi-language support and long-term memory. Curren
    ```python {PROJECT DIRECTORY}\VoiceAssistant.py```
    **OR** run python3 script:
    ```& python3 "{PROJECT DIRECTORY}\VoiceAssistant.py"```
-1. Example:
-```& python "C:\Users\username\Documents\VoiceAssistant\test.py"```
+   (Example: ```& python "C:\Users\username\Documents\VoiceAssistant\test.py"```)
 
 ## Windows
 ### Set-Up
@@ -25,8 +38,7 @@ A smart voice assistant with multi-language support and long-term memory. Curren
    ```Invoke-WebRequest -Uri https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py; python get-pip.py```
 1. Create an environment:
    ```python -m venv "{PROJECT DIRECTORY}\venv"```
-   Example:
-   ```python -m venv "C:\Users\username\Documents\VoiceAssistant\venv"```
+   (Example: ```python -m venv "C:\Users\username\Documents\VoiceAssistant\venv"```)
 1. Activate the environment:
    ```& "{PROJECT DIRECTORY}\venv\Scripts\Activate.ps1"```
 1. Install packages:
@@ -43,5 +55,4 @@ A smart voice assistant with multi-language support and long-term memory. Curren
    ```& python "{PROJECT DIRECTORY}\VoiceAssistant.py"```
    **OR** run python3 script:
    ```& python3 "{PROJECT DIRECTORY}\VoiceAssistant.py"```
-   Example:
-   ```& python "C:\Users\username\Documents\VoiceAssistant\test.py"```
+   (Example: ```& python "C:\Users\username\Documents\VoiceAssistant\test.py"```)
