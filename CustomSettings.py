@@ -2,26 +2,27 @@
 
 RaspberryPi = False
 
-assistantSpeechOn = True
-offlineTTS = False # Set to true if you don't want to use ElevenLabs or Google TTS
-
 textInput = False # Set to true of you don't want to use speech-to-text
 keepOnListening = True # Set to true if you want the assistant to keep on listening after you have talked to it
+
+assistantSpeechOn = True
+offlineTTS = False # Set to true if you want to use an offline TTS instead of ElevenLabs or Google TTS
+elevenLabs = True # For a highly realistic English TTS
+googleSTT = True # If this is False, a pretty bad STT in english will be used
+
+# Google Cloud Speech To Text and Text To Speech
+swedish = True
+english = True # Default option, can only be turned off if you have turned on another language
+googleTTS_name = "sv-SE-Wavenet-E" # "sv-SE-Wavenet-D" for female or "sv-SE-Wavenet-E" for male
+googleTTS_gender = "MALE" # "FEMALE" OR "MALE"
 
 listenTime = 10 # Set time (in seconds) to listen for a prompt after wake-word
 sumHistoryTime = 10*60 # Set time (in seconds) to listen for wake-word, until summarizing the recent conversation to long-term-memory
 messageLimit = 20 # Set limit of back-and-forth messages (until it will save everything to the long-term-memory)
-maxToolsPerPrompt = 3
 openAIdelay = 0 # Minimum delay (seconds) between OpenAI requests. Set to something above 20 seconds to use with free OpenAI account, or 0 if you want immediate responses with a paid account.
 
-# Google Cloud Speech To Text and Text To Speech
-googleSTT = True # If this is False, a pretty bad STT in english will be used
-swedish = True
-english = False # Default option, can only be turned off if you have turned on another language
-googleTTS_name = "sv-SE-Wavenet-E" # "sv-SE-Wavenet-D" for female or "sv-SE-Wavenet-E" for male
-googleTTS_gender = "MALE" # "FEMALE" OR "MALE"
-
 GPT4 = False # Changes the model used for some tasks, mostly difficult ones (True: GPT-4, False: GPT-3.5-Turbo)
+
 
 
 # AI Assistant Prompts
@@ -46,16 +47,22 @@ Please ensure that you follow these guidelines to accurately summarize conversat
 
 
 
+maxToolsPerPrompt = 3 # Default: 3
+wolframAlpha = True
+googleSearch = True
+
+
+
 # Porcupine Wake-Up-Word Recognizer
 wakeWordOn = True # Set to false if you want it to always listen
 wakeUpWords = ["computer", "jarvis"]
 
 
 
-# Raspberry Pi Speaker
+# Raspberry Pi
 wakeSpeaker = False
 speakerSleepTime = 19*60 # How many seconds it takes for the speaker to sleep
-
+animationFPS = 20 # MAX7219 8x8 matrix display (If you have one)
 
 
 # ElevenLabs
@@ -66,9 +73,6 @@ SIMILARITY_BOOST = 0.9
 VOICE_ID = "EXAVITQu4vr4xnSDxMaL" # Bella (Happy voice)
 #VOICE_ID = "TxGEqnHWrfWFTfGW9XjX" # Josh (Snarky voice)
 
-
-
-animationFPS = 20 # MAX7219 8x8 matrix display (If you have one)
 
 
 # Print out more outputs, for debugging (Developer Mode)
