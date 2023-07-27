@@ -6,6 +6,7 @@ A smart voice assistant with multi-language support and long-term memory. Curren
 
 ## Get API-keys, credentials and ID's
 If you do not want to gather all of this information or do not have time, simply do not save them to the "apiKeys.py" file. Only the OpenAI API Key is required for the assistant to function. However, I recommend to use its full potential by filling in the information. It is really fascinating!
+
 **Save these keys and ID's to the "apiKeys.py" file (only the OpenAI API Key is required):**
 - [OpenAI API Key](https://platform.openai.com/account/api-keys): If you have an OpenAI account, you can find your API Key in the user settings.
 - [Porcupine Access Key (Wake-word recognizer)](https://console.picovoice.ai/): Sign up for Picovoice Console to get your Access Key.
