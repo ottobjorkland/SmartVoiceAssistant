@@ -223,18 +223,19 @@ def main():
                 hasSummarized = False
                 start_time = time.time()
                 if keepOnListening == False: break # Stop listening, if keepOnListening is set to false by user
-                else: openAudioStream() # Start listning again
+                elif (keepOnListening == True) and (textInput == False):
+                    print("Listening...")
+                    openAudioStream() # Start listning again
         # Restart
         if MAX7219Lib == True: animate(reversed(loading_frames), animationSPF) # Visualize assistant sleep on matrix display
         openAudioStream()
         if wakeWordOn and (textInput == False): print(Style.NORMAL+Fore.WHITE+"Waiting for wake-word")
-        elif (wakeWordOn == False) and (textInput == False): print("Listening...")
 
     if time.time() - start_time > sumHistoryTime: # if (time.time() - start_time > sumHistoryTime) and (hasSummarized == False) # TEST
         print(Fore.YELLOW+str(sumHistoryTime)+" seconds has passed since last conversation")
         summarizeHistory()
         if wakeWordOn and (textInput == False): print("Waiting for wake-word")
-        elif (wakeWordOn == False) and (textInput == False): print("Listening...")
+        elif (keepOnListening == True) and (textInput == False): print("Listening...")
 
     if wakeSpeaker and assistantSpeechOn and (time.time() - lastSoundTime > speakerSleepTime):
         beep()
