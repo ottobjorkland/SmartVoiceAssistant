@@ -1,12 +1,12 @@
 # SmartVoiceAssistant
 A smart voice assistant with multi-language support and long-term memory. Currently best for Swedish and English. Compatible with Windows and Raspberry Pi. The assistant can use various functions and tools to answer question (Google, Wolfram Alpha, etc.). Based on OpenAI's GPT-models, Google STT and TTS, and ElevenLabs TTS.
 
-
 ## Download
 - Start by downloading all of the files in this repository as a ZIP-file, and unzip as a folder (with the files in it) on your device.
 
 ## Get API-keys, credentials and ID's
-**Save all of these keys and ID's to the "apiKeys.py" file:**
+If you do not want to gather all of this information or do not have time, simply do not save them to the "apiKeys.py" file. Only the OpenAI API Key is required for the assistant to function. However, I recommend to use its full potential by filling in the information. It is really fascinating!
+**Save these keys and ID's to the "apiKeys.py" file (only the OpenAI API Key is required):**
 - [OpenAI API Key](https://platform.openai.com/account/api-keys): If you have an OpenAI account, you can find your API Key in the user settings.
 - [Porcupine Access Key (Wake-word recognizer)](https://console.picovoice.ai/): Sign up for Picovoice Console to get your Access Key.
 - [ElevenLabs API Key (Text-To-Speech)](https://elevenlabs.io/): Create an account, click the profile icon in the top-right corner, and get the API Key from "Profile Settings".
