@@ -6,14 +6,22 @@ A smart voice assistant with multi-language support and long-term memory. Curren
 - Start by downloading all of the files in this repository as a ZIP-file, and unzip as a folder (with the files in it) on your device.
 
 ## Get API-keys, credentials and ID's
-- OpenAI API Key
-- Porcupine Access Key (Wake-word recognizer)
-- ElevenLabs API Key (Text-To-Speech)
+**Save all of these keys and ID's to the "apiKeys.py" file:**
+- [OpenAI API Key](https://platform.openai.com/account/api-keys): If you have an OpenAI account, you can find your API Key in the user settings.
+- [Porcupine Access Key (Wake-word recognizer)](https://console.picovoice.ai/): Sign up for Picovoice Console to get your Access Key.
+- [ElevenLabs API Key (Text-To-Speech)](https://elevenlabs.io/): Create an account, click the profile icon in the top-right corner, and get the API Key from "Profile Settings".
+- [Wolfram Alpha App ID](https://developer.wolframalpha.com/): Sign up for a developer account, create an app under "My Apps" > "Get an AppID", and get the AppID
 - Google
-  - Custom Search API Key (developerKey)
-  - Search Engine ID (cx)
-  - Cloud JSON Credentials File
-- Wolfram Alpha App ID
+  - [Custom Search API Key (developerKey)](https://developers.google.com/custom-search/v1/overview): Create a new project and get the API Key by clicking "Get a Key".
+  - [Search Engine ID (cx)](https://programmablesearchengine.google.com/controlpanel/all): Create a Search Engine (with whatever settings you like), then you can find its ID in "Overview" under the "Basic" section.
+  - Cloud JSON Credentials File:
+    1. Go to the [Google Cloud Console](https:/console.cloud.google.com/)
+    1. Click on the Menu button, then go to "APIs & Services" > "Credentials"
+    1. Select the service account you want to create a key for under "Service Accounts", or create a new one (click on "Create credentials" > "Service account")
+    1. Click "Keys" > "Add Key" > "Create new key"
+    1. Choose "JSON" as the key type and click on "Create"
+    1. A JSON key file will be downloaded to your device
+    1. Move the JSON file to the repository folder that all other files Python and JSON files are in
 
 ## Raspberry Pi
 ### Set-Up
@@ -26,8 +34,8 @@ A smart voice assistant with multi-language support and long-term memory. Curren
 1. Run python script:
    ```python {PROJECT DIRECTORY}\VoiceAssistant.py```
    **OR** run python3 script:
-   ```& python3 "{PROJECT DIRECTORY}\VoiceAssistant.py"```
-   (Example: ```& python "C:\Users\username\Documents\VoiceAssistant\test.py"```)
+   ```python3 "{PROJECT DIRECTORY}\VoiceAssistant.py"```
+   (Example: ```python "C:\Users\username\Documents\VoiceAssistant\test.py"```)
 
 ## Windows
 ### Set-Up
