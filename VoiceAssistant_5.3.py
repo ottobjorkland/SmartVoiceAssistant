@@ -82,18 +82,16 @@ longTermMemoryPath = os.path.join(scriptDir, "longTermMemory.json")
 textToSpeechFilePath = os.path.join(scriptDir, "textToSpeech.mp3")
 googleCredentialPath = os.path.join(scriptDir, GOOGLE_JSON_CREDENTIALS)
 
-#googleCredentialsExists = True
-
 if os.path.exists(googleCredentialPath):
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = googleCredentialPath
 else:
-    #googleCredentialsExists = False
-    print(Style.BRIGHT+Fore.RED+"WARNING: Google JSON Credentials File was not found. Please provide a valid file name for it in apiKeys.py to use Google STT and TTS.")
+    print(Style.BRIGHT+Fore.RED+"WARNING: Google JSON Credentials File was not found. Please provide a valid file name for it in apiKeys.py to use Google Search, STT and TTS.")
     if swedish:
         print(Style.BRIGHT+Fore.RED+"Assistant requires Google STT and TTS to talk Swedish, which means that only english is used until you have fixed this.")
         swedish = False
         english = True
     googleSTT = False
+    googleSearch = False
     print("Using another STT in english instead")
 
 # ElevenLabs
