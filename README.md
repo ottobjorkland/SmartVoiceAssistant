@@ -1,7 +1,7 @@
 # SmartVoiceAssistant
 A smart AI voice assistant with multi-language support and long-term memory. Currently best for Swedish and English. Compatible with Windows and Raspberry Pi. The assistant can use various functions and tools to answer question (Google, Wolfram Alpha, etc.). Based on OpenAI's GPT-models, Google STT and TTS, and ElevenLabs TTS.
 
-![alt text]([http://url/to/img.png](https://github.com/ottobjorkland/SmartVoiceAssistant/blob/main/SpeakerImage.jpg?raw=true))
+![alt text](https://github.com/ottobjorkland/SmartVoiceAssistant/blob/main/SpeakerImage.jpg?raw=true)
 
 ## Download
 - Start by downloading all of the files in this repository as a ZIP-file, and unzip as a folder (with the files in it) on your device.
