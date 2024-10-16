@@ -1,0 +1,5 @@
+{
+  "tasks": {
+    "test": "python VoiceAssistant_5.3.py"
+  }
+}
