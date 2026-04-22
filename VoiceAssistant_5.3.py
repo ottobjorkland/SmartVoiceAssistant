@@ -587,7 +587,7 @@ def useTool(userPrompt):
 
             evalCalc = response2.replace("^", "**")
             try:
-                answer = eval(evalCalc, math_functions)
+                answer = eval(evalCalc, {"__builtins__": {}}, math_functions)
                 toolAnswer = 'Assistant used calculator tool: {} = {}'.format(response2, answer)
                 toolMsgs.append({'role':'system','content':'Calculator answer: {}'.format(answer)})
             except:
