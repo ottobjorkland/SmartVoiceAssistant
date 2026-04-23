@@ -39,8 +39,8 @@ except:
     googleSTT = False
 
 from CustomSettings import assistantSpeechOn, offlineTTS, textInput, keepOnListening, listenTime, sumHistoryTime, messageLimit, startPrompt, summarizePrompt
-from CustomSettings import wakeUpWords, STABILITY, SIMILARITY_BOOST, VOICE_ID, animationFPS, googleSTT, swedish, english, maxToolsPerPrompt, openAIdelay
-from CustomSettings import googleTTS_name, googleTTS_gender, swedishStartPrompt, wakeWordOn, wakeSpeaker, speakerSleepTime, RaspberryPi, devMode, overrideMemPrompt
+from CustomSettings import wakeUpWords, STABILITY, SIMILARITY_BOOST, VOICE_ID, animationFPS, googleSTT, czech, english, maxToolsPerPrompt, openAIdelay
+from CustomSettings import googleTTS_name, googleTTS_gender, czechStartPrompt, wakeWordOn, wakeSpeaker, speakerSleepTime, RaspberryPi, devMode, overrideMemPrompt
 from CustomSettings import sweOverrideMemPrompt, GPT4, elevenLabs, wolframAlpha, googleSearch
 from apiKeys import openai_api_key, porcupineAccessKey, XI_API_KEY, googleCustomSearchAPI, googleSearchEngineID, GOOGLE_JSON_CREDENTIALS, wolframAlphaAppID
 import openai
@@ -86,9 +86,9 @@ if os.path.exists(googleCredentialPath):
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = googleCredentialPath
 else:
     print(Style.BRIGHT+Fore.RED+"WARNING: Google JSON Credentials File was not found. Please provide a valid file name for it in apiKeys.py to use Google Search, STT and TTS.")
-    if swedish:
-        print(Style.BRIGHT+Fore.RED+"Assistant requires Google STT and TTS to talk Swedish, which means that only english is used until you have fixed this.")
-        swedish = False
+    if czech:
+        print(Style.BRIGHT+Fore.RED+"Assistant requires Google STT and TTS to talk Czech, which means that only english is used until you have fixed this.")
+        czech = False
         english = True
     googleSTT = False
     googleSearch = False
@@ -279,7 +279,7 @@ def userApprove(userPrompt):
     approveFuncList = [
                 {
                     "name": "yes_or_no",
-                    "description": 'Determine if the user said “yes” or “no” in any way (in Swedish or English). You must be certain, otherwise choose "UNSURE".',
+                    "description": 'Determine if the user said “yes” or “no” in any way (in Czech or English). You must be certain, otherwise choose "UNSURE".',
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -435,7 +435,7 @@ def useTool(userPrompt):
                 rstMemMsgs.append({'role':'user','content':userPrompt})
 
                 memRstFuncDesc = (
-                    'Determine what memory the user wants to reset/delete from this device (in Swedish or English). '
+                    'Determine what memory the user wants to reset/delete from this device (in Czech or English). '
                     +'Or is it wanted at all?\n\n'
                     +'LONG TERM: Older conversations before this one\n'
                     +'SHORT TERM: The current conversation\n'
@@ -656,13 +656,13 @@ def detectLanguage(text):
     lanFuncList = [
         {
             "name": "english_or_swedish",
-            "description": "Based on the user message, determine if it is English or Swedish",
+            "description": "Based on the user message, determine if it is English or Czech",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "decision": {
                         "type": "string",
-                        "enum": ["ENGLISH", "SWEDISH"]
+                        "enum": ["ENGLISH", "CZECH"]
                     },
                 },
                 "required": ["decision"]
@@ -677,7 +677,7 @@ def detectLanguage(text):
     else:
         lanDecision = 'ENGLISH'
 
-    if lanDecision == "SWEDISH": return "sv"
+    if lanDecision == "CZECH": return "cs"
     else: return "en"
 
 def beep():
@@ -702,7 +702,7 @@ def playAudio(language):
         player.audio_set_volume(100) # Set the volume to 100%
         player.play() # play the media
     elif pygameLib == True: # For Windows
-        if language == "sv": # Swedish
+        if language == "cs": # Czech
             sound = pygame.mixer.Sound(textToSpeechFilePath) # Load the sound file
             duration = sound.get_length() * 1000  # Convert to milliseconds
             channel = sound.play()
@@ -725,7 +725,7 @@ def textToSpeech(text, language):
 
     print("Generating text-to-speech...")
 
-    if language == "sv": # Swedish
+    if language == "cs": # Czech
         client = texttospeech.TextToSpeechClient()
         input_text = texttospeech.SynthesisInput(text=text)
 
@@ -733,7 +733,7 @@ def textToSpeech(text, language):
         else: ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
 
         voice = texttospeech.VoiceSelectionParams(
-            language_code="sv-SE",
+            language_code="cs-CZ",
             name=googleTTS_name,
             ssml_gender=ssml_gender,
         )
@@ -1208,7 +1208,7 @@ def answer(prompt, toolAnswer):
     messages.extend(history) # Take everything from history and put into messages
 
     # Start prompt
-    if swedish == True and english == False: messages.append({"role": "system", "content": swedishStartPrompt})
+    if czech == True and english == False: messages.append({"role": "system", "content": czechStartPrompt})
     else: messages.append({"role": "system", "content": startPrompt})
 
     # User Prompt
@@ -1311,12 +1311,12 @@ def speakNprint(response, stream=False):
                 time.sleep(0.3)
             offlineTextToSpeech(finalResponse)
         else:
-            if swedish and english:
-                language = detectLanguage(finalResponse) # Detects language and outputs as "sv" or "en", swedish or english
+            if czech and english:
+                language = detectLanguage(finalResponse) # Detects language and outputs as "cs" or "en", czech or english
                 textToSpeech(finalResponse, language)
-            elif swedish == True and english == False:
-                textToSpeech(finalResponse, "sv")
-            elif english == True and swedish == False:
+            elif czech == True and english == False:
+                textToSpeech(finalResponse, "cs")
+            elif english == True and czech == False:
                 textToSpeech(finalResponse, "en")
     return finalResponse
 
@@ -1345,9 +1345,9 @@ def googleSpeechToText():
     client = speech.SpeechClient()
 
     # Set up the recognition config
-    if swedish and english:
-        lang = 'en-US'
-        altLang = 'sv-SE'
+    if czech and english:
+        lang = 'cs-CZ'
+        altLang = 'en-US'
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
             sample_rate_hertz=sampleRate,
@@ -1355,8 +1355,8 @@ def googleSpeechToText():
             alternative_language_codes=[altLang]
         )
     else:
-        if swedish:
-            lang = 'sv-SE'
+        if czech:
+            lang = 'cs-CZ'
         else:
             lang = 'en-US'
         config = speech.RecognitionConfig(
