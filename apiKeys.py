@@ -7,6 +7,9 @@ porcupineAccessKey = "{KEY_HERE}"
 # ElevenLabs
 XI_API_KEY = "{KEY_HERE}"
 
+# 60db.ai (Text-To-Speech)
+SIXTYDB_API_KEY = "{KEY_HERE}"
+
 # Google Search Engine
 googleCustomSearchAPI = "{KEY_HERE}" # Google Custom Search API Key (developerKey)
 googleSearchEngineID = "{ENGINE_ID_HERE}" # Google Search Engine ID (cx)

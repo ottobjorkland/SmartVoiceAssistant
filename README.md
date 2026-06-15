@@ -1,5 +1,5 @@
 # SmartVoiceAssistant
-A smart AI voice assistant with multi-language support and long-term memory. Currently best for Swedish and English. Compatible with Windows and Raspberry Pi. The assistant can use various functions and tools to answer question (Google, Wolfram Alpha, etc.). Based on OpenAI's GPT-models, Google STT and TTS, and ElevenLabs TTS.
+A smart AI voice assistant with multi-language support and long-term memory. Currently best for Swedish and English. Compatible with Windows and Raspberry Pi. The assistant can use various functions and tools to answer question (Google, Wolfram Alpha, etc.). Based on OpenAI's GPT-models, Google STT and TTS, ElevenLabs TTS, and 60db.ai TTS.
 
 <img src="https://github.com/ottobjorkland/SmartVoiceAssistant/assets/81506445/015800af-8b39-46a6-be58-94af17b0179a" height="400">
 
@@ -13,6 +13,7 @@ If you do not want to gather all of this information or do not have time, simply
 - [OpenAI API Key](https://platform.openai.com/account/api-keys): If you have an OpenAI account, you can find your API Key in the user settings.
 - [Porcupine Access Key (Wake-word recognizer)](https://console.picovoice.ai/): Sign up for Picovoice Console to get your Access Key.
 - [ElevenLabs API Key (Text-To-Speech)](https://elevenlabs.io/): Create an account, click the profile icon in the top-right corner, and get the API Key from "Profile Settings".
+- [60db.ai API Key (Text-To-Speech)](https://60db.ai/): Create an account and get your API Key from the dashboard. Used as an alternative/fallback English TTS alongside ElevenLabs (see the "English Text-To-Speech providers" section below).
 - [Wolfram Alpha App ID](https://developer.wolframalpha.com/): Sign up for a developer account, create an app under "My Apps" > "Get an AppID", and get the AppID
 - Google
   - [Custom Search API Key (developerKey)](https://developers.google.com/custom-search/v1/overview): Create a new project and get the API Key by clicking "Get a Key".
@@ -25,6 +26,33 @@ If you do not want to gather all of this information or do not have time, simply
     1. Choose "JSON" as the key type and click on "Create"
     1. A JSON key file will be downloaded to your device
     1. Move the JSON file to the repository folder that all other files Python and JSON files are in
+
+## English Text-To-Speech providers (ElevenLabs + 60db.ai)
+For English, the assistant supports two high-quality TTS providers: **ElevenLabs** and **60db.ai**. You pick one as the primary; if it fails (e.g. a network error or wrong API Key), the other is tried automatically, and if both fail it falls back to the offline TTS. Swedish always uses Google Cloud TTS.
+
+### Configure it in `CustomSettings.py`
+```python
+elevenLabs = True            # Enable ElevenLabs
+sixtyDB = True               # Enable 60db.ai
+ttsProvider = "elevenlabs"   # Which one to use first: "elevenlabs" or "60db" (the other is the automatic fallback)
+
+# 60db.ai voice & settings (English) - get voice IDs from "GET https://api.60db.ai/myvoices"
+SIXTYDB_VOICE_ID = "{VOICE_ID_HERE}"  # Leave as-is to use the 60db system default voice
+SIXTYDB_STABILITY = 30                # 0-100, lower = less stable & funnier
+SIXTYDB_SIMILARITY = 90               # 0-100, source voice matching
+SIXTYDB_SPEED = 1.0                   # 0.5-2.0 speech speed multiplier
+SIXTYDB_ENHANCE = True                # Audio quality improvement
+```
+Add your 60db API Key in `apiKeys.py`:
+```python
+SIXTYDB_API_KEY = "{KEY_HERE}"
+```
+
+### Notes
+- To make 60db the primary voice, set `ttsProvider = "60db"`.
+- To disable a provider entirely, set its flag (`elevenLabs` / `sixtyDB`) to `False`.
+- Finding your 60db voice IDs: send a `GET` request to `https://api.60db.ai/myvoices` with the header `Authorization: Bearer YOUR_API_KEY`; copy a `voice_id` from the response into `SIXTYDB_VOICE_ID`.
+- No extra packages are required for 60db (it uses `requests` and the built-in `base64`, which are already installed).
 
 ## Raspberry Pi
 ### Set-Up

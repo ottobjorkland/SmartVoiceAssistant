@@ -8,6 +8,11 @@ keepOnListening = True # Set to true if you want the assistant to keep on listen
 assistantSpeechOn = True
 offlineTTS = False # Set to true if you want to use an offline TTS instead of ElevenLabs or Google TTS
 elevenLabs = True # For a highly realistic English TTS
+sixtyDB = True # 60db.ai English TTS (used together with ElevenLabs)
+
+# English TTS provider priority: "elevenlabs" or "60db".
+# The chosen provider is used first; if it fails, the other is tried automatically, then offline TTS.
+ttsProvider = "elevenlabs"
 googleSTT = True # If this is False, a pretty bad STT in english will be used
 
 # Google Cloud Speech To Text and Text To Speech
@@ -72,6 +77,14 @@ SIMILARITY_BOOST = 0.9
 # Voices to choose from:
 VOICE_ID = "EXAVITQu4vr4xnSDxMaL" # Bella (Happy voice)
 #VOICE_ID = "TxGEqnHWrfWFTfGW9XjX" # Josh (Snarky voice)
+
+
+# 60db.ai (English TTS) - get voice IDs from "GET https://api.60db.ai/myvoices"
+SIXTYDB_VOICE_ID = "{VOICE_ID_HERE}" # Leave as-is to use the 60db system default voice
+SIXTYDB_STABILITY = 30   # 0-100, lower = less stable & funnier (mirrors ElevenLabs STABILITY x100)
+SIXTYDB_SIMILARITY = 90  # 0-100, source voice matching (mirrors ElevenLabs SIMILARITY_BOOST x100)
+SIXTYDB_SPEED = 1.0      # 0.5-2.0 speech speed multiplier
+SIXTYDB_ENHANCE = True   # Audio quality improvement
 
 
 

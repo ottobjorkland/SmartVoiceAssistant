@@ -1,4 +1,4 @@
-import os, time, math, re, json, pyttsx3, requests, pvporcupine, struct, pyaudio, datetime, tiktoken
+import os, time, math, re, json, base64, pyttsx3, requests, pvporcupine, struct, pyaudio, datetime, tiktoken
 import speech_recognition as sr
 from colorama import init, Fore, Back, Style
 from urllib.request import urlopen
@@ -42,7 +42,9 @@ from CustomSettings import assistantSpeechOn, offlineTTS, textInput, keepOnListe
 from CustomSettings import wakeUpWords, STABILITY, SIMILARITY_BOOST, VOICE_ID, animationFPS, googleSTT, swedish, english, maxToolsPerPrompt, openAIdelay
 from CustomSettings import googleTTS_name, googleTTS_gender, swedishStartPrompt, wakeWordOn, wakeSpeaker, speakerSleepTime, RaspberryPi, devMode, overrideMemPrompt
 from CustomSettings import sweOverrideMemPrompt, GPT4, elevenLabs, wolframAlpha, googleSearch
+from CustomSettings import sixtyDB, ttsProvider, SIXTYDB_VOICE_ID, SIXTYDB_STABILITY, SIXTYDB_SIMILARITY, SIXTYDB_SPEED, SIXTYDB_ENHANCE
 from apiKeys import openai_api_key, porcupineAccessKey, XI_API_KEY, googleCustomSearchAPI, googleSearchEngineID, GOOGLE_JSON_CREDENTIALS, wolframAlphaAppID
+from apiKeys import SIXTYDB_API_KEY
 import openai
 openai.api_key = openai_api_key
 
@@ -719,79 +721,143 @@ def playAudio(language):
             pygame.init()
             pygame.mixer.init()
 
+def elevenLabsTTS(text):
+    # Generate English speech with ElevenLabs and write it to textToSpeechFilePath
+    headers = {
+        "Accept": "audio/mpeg",
+        "xi-api-key": XI_API_KEY,
+        "Content-Type": "application/json"
+    }
+    data = {
+        "text": text,
+        "voice_settings": {
+            "stability": STABILITY,
+            "similarity_boost": SIMILARITY_BOOST
+        }
+    }
+    if vlcLib == True: # For Raspberry Pi
+        response = requests.post(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}", json=data, headers=headers)
+        response.raise_for_status()
+        with open(textToSpeechFilePath, "wb") as f:
+            f.write(response.content)
+    else: # Streamed (for Windows/pygame and as the default)
+        response = requests.post(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}/stream", json=data, headers=headers, stream=True)
+        response.raise_for_status()
+        with open(textToSpeechFilePath, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+
+def sixtyDBtts(text):
+    # Generate English speech with 60db.ai and write it to textToSpeechFilePath.
+    # 60db returns JSON with the audio as a base64 string, so we decode it before writing.
+    headers = {
+        "Authorization": f"Bearer {SIXTYDB_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "text": text,
+        "stability": SIXTYDB_STABILITY,   # 0-100
+        "similarity": SIXTYDB_SIMILARITY, # 0-100
+        "speed": SIXTYDB_SPEED,           # 0.5-2.0
+        "enhance": SIXTYDB_ENHANCE,
+        "output_format": "mp3"            # keep mp3 so it plays from textToSpeech.mp3 like every other provider
+    }
+    if SIXTYDB_VOICE_ID and "{" not in SIXTYDB_VOICE_ID: # Otherwise use the 60db system default voice
+        data["voice_id"] = SIXTYDB_VOICE_ID
+    response = requests.post("https://api.60db.ai/tts-synthesize", json=data, headers=headers)
+    response.raise_for_status()
+    payload = response.json()
+    if not payload.get("success") or not payload.get("audio_base64"):
+        raise RuntimeError(payload.get("message", "60db returned no audio"))
+    with open(textToSpeechFilePath, "wb") as f:
+        f.write(base64.b64decode(payload["audio_base64"]))
+
+def englishTTSproviders():
+    # Ordered list of (name, generatorFunc) for English TTS.
+    # The provider chosen in ttsProvider comes first, the other is the automatic fallback.
+    allProviders = {
+        "ElevenLabs": (elevenLabs, elevenLabsTTS),
+        "60db": (sixtyDB, sixtyDBtts),
+    }
+    primary = "60db" if str(ttsProvider).lower() in ("60db", "sixtydb") else "ElevenLabs"
+    secondary = "ElevenLabs" if primary == "60db" else "60db"
+    order = []
+    for name in (primary, secondary):
+        enabled, generate = allProviders[name]
+        if enabled:
+            order.append((name, generate))
+    return order
+
+def disableTTSprovider(name):
+    # Disable a provider for the rest of the session (e.g. after a wrong API key) so we stop retrying it
+    global elevenLabs, sixtyDB
+    if name == "ElevenLabs": elevenLabs = False
+    elif name == "60db": sixtyDB = False
+    print(Style.BRIGHT+Fore.RED+f"WARNING: Disabling {name} for this session. Please provide a valid API Key in apiKeys.py to use {name}.")
+
+def isAuthError(e):
+    # True if the exception is an HTTP 401/403 (likely a wrong/missing API key)
+    response = getattr(e, "response", None)
+    return response is not None and getattr(response, "status_code", None) in (401, 403)
+
 def textToSpeech(text, language):
-    
-    global elevenLabs
 
     print("Generating text-to-speech...")
 
-    if language == "sv": # Swedish
-        client = texttospeech.TextToSpeechClient()
-        input_text = texttospeech.SynthesisInput(text=text)
+    if language == "sv": # Swedish (Google Cloud TTS)
+        try:
+            client = texttospeech.TextToSpeechClient()
+            input_text = texttospeech.SynthesisInput(text=text)
 
-        if googleTTS_gender == "MALE": ssml_gender=texttospeech.SsmlVoiceGender.MALE
-        else: ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+            if googleTTS_gender == "MALE": ssml_gender=texttospeech.SsmlVoiceGender.MALE
+            else: ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
 
-        voice = texttospeech.VoiceSelectionParams(
-            language_code="sv-SE",
-            name=googleTTS_name,
-            ssml_gender=ssml_gender,
-        )
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.MP3
-        )
-        response = client.synthesize_speech(
-            request={"input": input_text, "voice": voice, "audio_config": audio_config}
-        )
-        with open(textToSpeechFilePath, "wb") as out:
-            out.write(response.audio_content)
-
-    else: # English
-        if elevenLabs:
-            headers = {
-                "Accept": "audio/mpeg",
-                "xi-api-key": XI_API_KEY,
-                "Content-Type": "application/json"
-            }
-            data = {
-                "text": text,
-                "voice_settings": {
-                    "stability": STABILITY,
-                    "similarity_boost": SIMILARITY_BOOST
-                }
-            }
-            try:
-                if vlcLib == True: # For Raspberry Pi
-                    response = requests.post(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}", json=data, headers=headers)
-                    with open(textToSpeechFilePath, "wb") as f:
-                        f.write(response.content)
-                elif pygameLib == True: # For Windows
-                    response = requests.post(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}/stream", json=data, headers=headers, stream=True)
-                    with open(textToSpeechFilePath, 'wb') as f:
-                        for chunk in response.iter_content(chunk_size=1024):
-                            if chunk:
-                                f.write(chunk)
-            except Exception as e: # There was an error
-                print(Style.BRIGHT+Fore.RED+f"ElevenLabs Error:\n{e}")
-                print("Using offline text-to-speech instead...")
-                offlineTextToSpeech(text)
-                return None
-        else: # elevenLabs == False
-            offlineTextToSpeech(text)
-            return None
-
-    try:
-        playAudio(language)
-    except Exception as e:
-        print(Style.BRIGHT+Fore.RED+f"Error trying to play audio:\n{e}")
-        if elevenLabs == True: # If ElevenLabs is used, this error likely occured because of wrong API Key
-            print(Style.BRIGHT+Fore.RED+"WARNING: This error likely occured because the ElvenLabs API Key is wrong. Please provide an API Key in apiKeys.py to use ElevenLabs.")
+            voice = texttospeech.VoiceSelectionParams(
+                language_code="sv-SE",
+                name=googleTTS_name,
+                ssml_gender=ssml_gender,
+            )
+            audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.MP3
+            )
+            response = client.synthesize_speech(
+                request={"input": input_text, "voice": voice, "audio_config": audio_config}
+            )
+            with open(textToSpeechFilePath, "wb") as out:
+                out.write(response.audio_content)
+            playAudio(language)
+        except Exception as e:
+            print(Style.BRIGHT+Fore.RED+f"Google TTS Error:\n{e}")
             print("Using offline text-to-speech instead...")
             offlineTextToSpeech(text)
-            elevenLabs = False
             return None
+        return textToSpeechFilePath
 
-    return textToSpeechFilePath
+    # English: try the selected provider first, then the other, then offline TTS
+    for name, generate in englishTTSproviders():
+        try:
+            generate(text) # Download/decode the audio to textToSpeechFilePath
+        except Exception as e: # The request to the provider failed
+            if isAuthError(e):
+                print(Style.BRIGHT+Fore.RED+f"{name} Error (likely a wrong/missing API Key in apiKeys.py):\n{e}")
+                disableTTSprovider(name)
+            else:
+                print(Style.BRIGHT+Fore.RED+f"{name} Error:\n{e}")
+            print("Trying the next text-to-speech option...")
+            continue
+        try:
+            playAudio(language)
+            return textToSpeechFilePath
+        except Exception as e: # The audio could not be played (corrupt audio or wrong API Key)
+            print(Style.BRIGHT+Fore.RED+f"Error trying to play {name} audio (the API Key may be wrong):\n{e}")
+            disableTTSprovider(name)
+            print("Trying the next text-to-speech option...")
+            continue
+
+    print("Using offline text-to-speech instead...")
+    offlineTextToSpeech(text)
+    return None
 
 def offlineTextToSpeech(text):
     tts.say(text)
